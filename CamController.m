@@ -123,6 +123,15 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     
     UIApplication.sharedApplication.idleTimerDisabled = NO;
     UIApplication.sharedApplication.idleTimerDisabled = YES;
+    
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [self imageLibraryCheckAccessWithHandler:^(PHAuthorizationStatus status) {
+                if (status == PHAuthorizationStatusAuthorized) {
+                    NSString *string = [NSString stringWithFormat:@"%s : PHAuthorizationStatusAuthorized", __func__];
+                    [MJLogFileManager logStringToFile:string file:@"log.txt"];
+                }
+        }];
+    });
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -456,11 +465,44 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         [MJLogFileManager logErrorToFile:error file:@"log.txt"];
 }
 
-- (void)subjectAreaDidChange:(NSNotification *)notification {
-    NSString *string = [NSString stringWithFormat:@"%s", __func__];
-    [MJLogFileManager logStringToFile:string file:@"log.txt"];
+- (void)imageLibraryCheckAccessWithHandler:(void (^)(PHAuthorizationStatus status))handler {
+        PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+        if (status == PHAuthorizationStatusNotDetermined) {
+                [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+                        if (status != PHAuthorizationStatusAuthorized) {
+                                if (handler != nil)
+                                        handler(status);
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                [[[UIAlertView alloc] initWithTitle:@"Photos access"
+                                                            message:@"You explicitly disabled photo library access. This results in inability to work with photos."
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil] show];
+                            });
+                        } else if (status == PHAuthorizationStatusAuthorized) {
+                                if (handler != nil)
+                                        handler(status);
+                        }
+                }];
+        } else if (status != PHAuthorizationStatusAuthorized) {
+                if (handler != nil)
+                        handler(status);
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                [[[UIAlertView alloc] initWithTitle:@"Photos access"
+                                            message:@"Photo library access is disabled. Please check the application permissions or parental control settings in order to work with photos."
+                                           delegate:self
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil] show];
+            });
+        } else if (status == PHAuthorizationStatusAuthorized) {
+                if (handler != nil)
+                        handler(status);
+        }
+}
 
-    imageView.image = captureSession.createdImage;
+- (void)saveImageView{
     if (imageView.image) {
         UIImageWriteToSavedPhotosAlbum(
                 imageView.image,
@@ -471,6 +513,14 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
         [MJLogFileManager logStringToFile:string file:@"log.txt"];
     }
+}
+
+- (void)subjectAreaDidChange:(NSNotification *)notification {
+    NSString *string = [NSString stringWithFormat:@"%s", __func__];
+    [MJLogFileManager logStringToFile:string file:@"log.txt"];
+
+    imageView.image = captureSession.createdImage;
+    [self saveImageView];
     [captureSession setCreateImage:YES];
 
     [self focusAndExposeAtLastFocusPoint];
@@ -484,7 +534,6 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     [self stopRecording:nil];
 
     FolderController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"FolderControllerID"];
-//    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     controller.modalPresentationStyle = UIModalPresentationFullScreen;
     [self presentViewController:controller animated:YES completion:^(void){
     }];

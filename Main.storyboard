@@ -417,7 +417,7 @@
                                 <color key="backgroundColor" red="0.1176470588" green="0.1176470588" blue="0.1176470588" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <items>
                                     <barButtonItem style="plain" id="y6d-sU-sfa">
-                                        <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="CQU-E9-6kh">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="CQU-E9-6kh">
                                             <rect key="frame" x="16" y="10" width="25" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal">
@@ -655,7 +655,7 @@
                                     <action selector="tappedButtonCancel:" destination="1qc-ZB-3rI" eventType="touchUpInside" id="9Co-2L-d3F"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="Copyright 2018" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="xjK-mQ-eIV">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="Copyright 2020" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="xjK-mQ-eIV">
                                 <rect key="frame" x="220" y="88" width="160" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="Zgo-tX-Ofr"/>
@@ -675,7 +675,7 @@
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.0" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="3.4" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
                                 <rect key="frame" x="220" y="67" width="160" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="gc4-iF-XAy"/>
