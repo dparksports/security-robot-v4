@@ -112,7 +112,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     
     [captureSession enableTracking];
     // support asset writer rotation transform
-    [captureSession createNewWriterIfNotCreatedAndRotateInterface];
+//    [captureSession createNewWriterIfNotCreatedAndRotateInterface];
     
     [[FIRAuth auth] signInAnonymouslyWithCompletion:^(FIRUser *_Nullable user, NSError *_Nullable error) {
         if (error){
@@ -468,6 +468,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
                 @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
                 NULL);
         imageView.image = nil;
+        NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
+        [MJLogFileManager logStringToFile:string file:@"log.txt"];
     }
     [captureSession setCreateImage:YES];
 
@@ -482,8 +484,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     [self stopRecording:nil];
 
     FolderController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"FolderControllerID"];
-    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-//    controller.modalPresentationStyle = UIModalPresentationFullScreen;
+//    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    controller.modalPresentationStyle = UIModalPresentationFullScreen;
     [self presentViewController:controller animated:YES completion:^(void){
     }];
 }
