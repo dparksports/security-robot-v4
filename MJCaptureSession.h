@@ -10,6 +10,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
+#import <CoreImage/CoreImage.h>
+#import <Vision/Vision.h>
 #import "sys/stat.h"
 
 @interface MJCaptureSession : NSObject
@@ -19,6 +21,7 @@
 @property (nonatomic, readonly) AVCaptureConnection *videoConnection;
 @property (nonatomic, strong) UIImage *createdImage;
 @property (nonatomic, readwrite) BOOL createImage;
+@property (nonatomic, readwrite) NSInteger facecount;
 
 + (instancetype)sharedInstance;
 //- (void)addCaptureAudioDataToSession;

@@ -18,6 +18,7 @@
 #import "MJRoundPane.h"
 #import "MJCirclePane.h"
 #import "MJStartButtonPanel.h"
+#import "SDRecordButton.h"
 
 #import "FolderController.h"
 #import "CamController.h"
@@ -30,6 +31,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 @property (nonatomic) CAShapeLayer *maskLayer;
 @property (nonatomic) id sessionRuntimeErrorHandler;
 @property (nonatomic, strong) NSOperationQueue *notificationQueue;
+@property (nonatomic, strong) UIImage *saveImage;
 @end
 
 @implementation CamController {
@@ -37,7 +39,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     __weak IBOutlet UILabel *batteryLabel;
     __weak IBOutlet UILabel *memLabel;
     __weak IBOutlet UILabel *runTimeLabel;
-    __weak IBOutlet UIButton *recordButton;
+    __weak IBOutlet SDRecordButton *recordButton;
     __weak IBOutlet UIButton *torchButton;
     __weak IBOutlet MJPreviewLayerView *previewLayerView;
     __weak IBOutlet UIImageView *imageView;
@@ -51,6 +53,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     BOOL dimScreen;
     CGFloat originalBrightness;
     CGPoint lastFocusPointOnDevice;
+    CGFloat progress;
+
 }
 
 #pragma mark - Controller
@@ -61,6 +65,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
     
 //    [self restoreScreenDim];
+    [self configureButtonWithColor:[UIColor redColor] progressColor:[UIColor cyanColor]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -275,6 +280,9 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (void)updateStatus {
+    progress += 0.05/1.0;
+    [recordButton setProgress:progress];
+
     MJStatusManager *manager = [MJStatusManager sharedManager];
     runTimeLabel.text = [manager elapsedTimeString];
     
@@ -503,9 +511,9 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (void)saveImageView{
-    if (imageView.image) {
+    if (self.saveImage) {
         UIImageWriteToSavedPhotosAlbum(
-                imageView.image,
+                self.saveImage,
                 self,
                 @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
                 NULL);
@@ -519,8 +527,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     NSString *string = [NSString stringWithFormat:@"%s", __func__];
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
 
-    imageView.image = captureSession.createdImage;
-    [self saveImageView];
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [self setSaveImage:captureSession.createdImage];
+        [self saveImageView];
+    });
     [captureSession setCreateImage:YES];
 
     [self focusAndExposeAtLastFocusPoint];
@@ -552,7 +562,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
             [[UIApplication sharedApplication] endBackgroundTask:backgroundTaskID];
             backgroundTaskID = UIBackgroundTaskInvalid;
         }
-        [startButtonPanel toggleLogoPanel:NO];
+        
+        progress = 0;
+        [recordButton setProgress:progress];
+//        [startButtonPanel toggleLogoPanel:NO];
     }
 }
 
@@ -571,8 +584,18 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
             [MJLogFileManager logStringToFile:string file:@"log.txt"];
         }
         
-        [startButtonPanel toggleLogoPanel:YES];
+//        [startButtonPanel toggleLogoPanel:YES];
     }
+}
+
+- (void)configureButtonWithColor:(UIColor*)color progressColor:(UIColor *)progressColor {
+
+    recordButton.buttonColor = color;
+    recordButton.progressColor = progressColor;
+    
+    [recordButton addTarget:self action:@selector(toggleRecord:) forControlEvents:UIControlEventTouchDown];
+//    [recordButton addTarget:self action:@selector(stopRecording:) forControlEvents:UIControlEventTouchUpInside];
+//    [recordButton addTarget:self action:@selector(stopRecording:) forControlEvents:UIControlEventTouchUpOutside];
 }
 
 - (IBAction)swipeGesture:(UIGestureRecognizer *)gestureRecognizer {
