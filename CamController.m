@@ -65,7 +65,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
     
 //    [self restoreScreenDim];
-    [self configureButtonWithColor:[UIColor redColor] progressColor:[UIColor cyanColor]];
+    [self configureButtonWithColor:[UIColor whiteColor] progressColor:[UIColor redColor]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -280,8 +280,6 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (void)updateStatus {
-    progress += 0.05/1.0;
-    [recordButton setProgress:progress];
 
     MJStatusManager *manager = [MJStatusManager sharedManager];
     runTimeLabel.text = [manager elapsedTimeString];
@@ -296,6 +294,14 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:sel userInfo:nil repeats:YES];
         [self setStatusTimer:timer];
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        if ([captureSession isRecording]) {
+            progress += 0.05/1.0;
+            progress = (progress > 1) ? (progress - 1) : progress;
+            [recordButton setProgress:progress];
+        }
+    });
 }
 
 #pragma mark - CAAnimationDelegate
@@ -512,14 +518,14 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 
 - (void)saveImageView{
     if (self.saveImage) {
-        UIImageWriteToSavedPhotosAlbum(
-                self.saveImage,
-                self,
-                @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
-                NULL);
-        imageView.image = nil;
-        NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
-        [MJLogFileManager logStringToFile:string file:@"log.txt"];
+//        UIImageWriteToSavedPhotosAlbum(
+//                self.saveImage,
+//                self,
+//                @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
+//                NULL);
+//        imageView.image = nil;
+//        NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
+//        [MJLogFileManager logStringToFile:string file:@"log.txt"];
     }
 }
 

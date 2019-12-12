@@ -151,6 +151,10 @@
 }
 
 - (void)didTouchDown {
+    [self renderActivated];
+}
+
+- (void)renderActivated {
  
     CGFloat duration = 0.15;
     _circleLayer.contentsGravity = @"center";
@@ -262,7 +266,7 @@
 
 - (void)setProgress:(CGFloat)newProgress{
     _progressLayer.strokeEnd = newProgress;
-    
+    [self renderActivated];
 }
 
 @end

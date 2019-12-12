@@ -90,7 +90,7 @@
 
 - (NSInteger) maxFileCountBySize:(float)fileSizeInMB {
     float units = [self totalDiskSpaceInMB];
-    units = [self freeDiskSpaceInMB] -  (512*1); //512 * 4
+    units = [self freeDiskSpaceInMB] -  (512*3); //512 * 4
     float count = units / fileSizeInMB;
     NSLog(@"%s: fileCount: %.1f @ %.1f MB", __func__, count, fileSizeInMB);
     NSInteger fileCount = count;

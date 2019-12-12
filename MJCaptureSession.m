@@ -455,20 +455,13 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     if (self.createImage) {
         [self setCreateImage:NO];
         
-        CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-        CFDictionaryRef attachments = CMCopyDictionaryOfAttachments(kCFAllocatorDefault, sampleBuffer, kCMAttachmentMode_ShouldPropagate);
-        CIImage *ciImage = [[CIImage alloc] initWithCVPixelBuffer:pixelBuffer options:(__bridge NSDictionary *)attachments];
-        if (attachments) {
-            CFRelease(attachments);
-        }
-        
         pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
         bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
         width = CVPixelBufferGetWidth(pixelBuffer);
         height = CVPixelBufferGetHeight(pixelBuffer);
         size = CGSizeMake(width, height);
         isPlanar = CVPixelBufferIsPlanar(pixelBuffer);
-
+        
         if (! isPlanar) {
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             void *sourceBaseAddr = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
@@ -483,32 +476,6 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             CGContextRelease(contextRef);
         }
-
-        
-        // make sure your device orientation is not locked.
-        UIDeviceOrientation curDeviceOrientation = [[UIDevice currentDevice] orientation];
-        NSDictionary *imageOptions = [NSDictionary dictionaryWithObject:[self exifOrientation:curDeviceOrientation usingFrontFacingCamera:NO] forKey:CIDetectorImageOrientation];
-        
-        NSArray *features = [self.detector featuresInImage:ciImage
-                                                   options:imageOptions];
-        [self setFacecount:[features count]];
-        
-//        if ([features count]) {
-//            ciImage = [ciImage imageByApplyingOrientation:[self exifOrientation:[UIDevice currentDevice].orientation usingFrontFacingCamera:NO].intValue];
-//            [self setCreatedImage: [UIImage imageWithCIImage:ciImage]];
-//        }
-        
-//        NSDictionary *detectionResults = [self detectFacesFromSampleBuffer:sampleBuffer andPixelBuffer:pixelBuffer usingFrontFacingCamera:NO];
-//        UIImage *image = (UIImage *)detectionResults[@"image"];
-//        if (image) {
-//            [self setCreatedImage:image];
-//        }
-
-//        CFRetain(sampleBuffer);
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//          CFRelease(sampleBuffer);
-//        });
-//
     }
     
     CFRetain(sampleBuffer);
@@ -728,9 +695,11 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 //                           frameDuration.timescale];
     
     NSString *timestamp = [PHCalendarCalculate timestampInShortShortFormat];
-    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ %@",
-                        timestamp, elapsedTimeString, batteryLevelString, dropLabelString, usedMemoryInKBString];
-    
+//    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ Security Robot (c) 2020",
+//                        timestamp, elapsedTimeString, batteryLevelString, usedMemoryInKBString];
+    NSString *statusString = [NSString stringWithFormat:@"%@ %@ By Security Robot",
+                        timestamp, batteryLevelString];
+
     updateDrawString1 = ! updateDrawString1;
     if (updateDrawString1) {
         [self setDrawString1:statusString];
