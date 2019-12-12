@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -134,7 +134,7 @@
                                     <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zA3-JO-rsr" customClass="MJStartButtonPanel">
                                         <rect key="frame" x="200" y="462" width="200" height="120"/>
                                         <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hBo-lR-EDx" customClass="MJLogoPane">
+                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hBo-lR-EDx" customClass="MJLogoPane">
                                                 <rect key="frame" x="40" y="0.0" width="120" height="120"/>
                                                 <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
@@ -142,22 +142,19 @@
                                                     <constraint firstAttribute="height" constant="120" id="vPe-eR-mSm"/>
                                                 </constraints>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pe5-5k-dPa" customClass="MJCirclePane">
+                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pe5-5k-dPa" customClass="MJCirclePane">
                                                 <rect key="frame" x="40" y="0.0" width="120" height="120"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="120" id="4B2-D2-Yii"/>
                                                     <constraint firstAttribute="height" constant="120" id="xFD-E9-d4n"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oUC-dU-YiH">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oUC-dU-YiH" customClass="SDRecordButton">
                                                 <rect key="frame" x="40" y="0.0" width="120" height="120"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="120" id="JZI-9l-ZWN"/>
                                                     <constraint firstAttribute="height" constant="120" id="lf9-QV-yK6"/>
                                                 </constraints>
-                                                <connections>
-                                                    <action selector="toggleRecord:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nsz-do-vxp"/>
-                                                </connections>
                                             </button>
                                         </subviews>
                                         <rect key="contentStretch" x="0.0" y="0.0" width="1" height="0.94999999999999996"/>
@@ -270,6 +267,7 @@
                         <outlet property="imageView" destination="OVy-CI-Z0Q" id="r1v-zR-1eA"/>
                         <outlet property="memLabel" destination="uyl-fh-xm4" id="eAV-Ur-OnE"/>
                         <outlet property="previewLayerView" destination="6jn-1X-E5F" id="Inh-5b-0A0"/>
+                        <outlet property="recordButton" destination="oUC-dU-YiH" id="lG5-FL-wpz"/>
                         <outlet property="recordingLabel" destination="ll9-Od-ynu" id="jSu-7v-dxe"/>
                         <outlet property="runTimeLabel" destination="ugd-jI-3yU" id="UTN-jK-Ape"/>
                         <outlet property="startButtonPanel" destination="zA3-JO-rsr" id="Wz9-rJ-2mn"/>
