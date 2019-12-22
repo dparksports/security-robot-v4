@@ -37,7 +37,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 @property (nonatomic, strong) MJAssetWriter *videoWriter;
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureDevice *videoCaptureDevice;
-@property (nonatomic, strong) NSString *drawString1, *drawString2;
+@property (nonatomic, strong) NSString *drawString1, *drawString2, *drawTitle;
 @property (nonatomic, strong) NSTimer *timer;
 @end
 
@@ -63,9 +63,9 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     BOOL drawText;
     NSUInteger countStatus;
     volatile BOOL updateDrawString1;
-    const char *cDrawString1, *cDrawString2;
-    char drawStringArray1[100], drawStringArray2[100];
-    size_t drawStringLength1, drawStringLength2;
+    const char *cDrawString1, *cDrawString2, *cDrawTitle;
+    char drawStringArray1[100], drawStringArray2[100], titleArray[100];
+    size_t drawStringLength1, drawStringLength2, drawTitleLength;
     CGFloat yOffsetDrawString;
     
     NSUInteger countDroppedSampleBuffer;
@@ -105,83 +105,29 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 
 #pragma mark - AVCaptureDevice
 
-- (void)createBitmapContext {
-    fontSize = [MJCaptureSessionPreset fontSizeBySessionPreset:self.captureSession.sessionPreset];
+- (void)calculateFontSize {
+    colorSpace = CGColorSpaceCreateDeviceRGB();
+//    fontSize = [MJCaptureSessionPreset fontSizeBySessionPreset:self.captureSession.sessionPreset];
+    if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
+        fontSize = 12 * 3;
+    } else {
+        if (self.captureSession.sessionPreset == AVCaptureSessionPresetMedium) {
+            fontSize = 12 & 2;
+        } else {
+            if (self.captureSession.sessionPreset == AVCaptureSessionPresetLow) {
+                fontSize = 9;
+            } else {
+                fontSize = 12 * 1;
+            }
+        }
+    }
+
     NSString *fontName = @"Helvetica";
     fontRef = CTFontCreateWithName((CFStringRef)fontName, fontSize, NULL);
-    colorSpace = CGColorSpaceCreateDeviceRGB();
 }
 
-//- (void)drawTextInContextOLD:(CGContextRef)context fromConnection:(AVCaptureConnection *)connection {
-//    
-//    AVCaptureVideoOrientation videoOrientation = connection.videoOrientation;
-//    NSString *string = [MJCaptureSessionPreset videoOrientationOrientationString:videoOrientation];
-//    NSLog(@"%s: videoOrientation:%@", __func__, string);
-//    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-//    string = [MJCaptureSessionPreset deviceOrientationString:deviceOrientation];
-//    NSLog(@"%s: deviceOrientation:%@", __func__, string);
-//    
-//    CGContextSelectFont(context, "Helvetica", fontSize, kCGEncodingMacRoman);
-//    switch (videoOrientation) {
-//        case AVCaptureVideoOrientationLandscapeLeft: {
-//            CGFloat tx = size.width * 1.0;
-//            CGFloat ty = size.height * (28/30.0);
-//            CGContextTranslateCTM(context, tx,ty);
-//            
-//            CGFloat degrees = 180;
-//            CGFloat angleInRadians = degrees * M_PI/180.0;
-//            CGContextRotateCTM(context, angleInRadians);
-//        }
-//            break;
-//        case AVCaptureVideoOrientationLandscapeRight: {
-//            CGFloat degrees = 0.1;
-//            CGFloat angleInRadians = degrees * M_PI/180.0;
-//            CGContextRotateCTM(context, angleInRadians);
-//        }
-//            break;
-//        case AVCaptureVideoOrientationPortrait: {
-//            CGFloat tx = size.width * (19/20.0);
-//            CGFloat ty = size.height * 0;
-//            CGContextTranslateCTM(context, tx,ty);
-//            
-//            CGFloat degrees = 90;
-//            CGFloat angleInRadians = degrees * M_PI/180.0;
-//            CGContextRotateCTM(context, angleInRadians);
-//        }
-//            break;
-//        case AVCaptureVideoOrientationPortraitUpsideDown :{
-//            CGFloat degrees = 0;
-//            CGFloat angleInRadians = degrees * M_PI/180.0;
-//            CGContextRotateCTM(context, angleInRadians);
-//        }
-//            break;
-//        default: {
-//            CGFloat degrees = 0;
-//            CGFloat angleInRadians = degrees * M_PI/180.0;
-//            CGContextRotateCTM(context, angleInRadians);
-//        }
-//            break;
-//    }
-//    
-//    CGContextSetRGBStrokeColor(context, 0, 0, 0, 1.0);
-//    CGContextSetRGBFillColor(context, 1, 1, 1, 1.0);
-//    CGContextSetTextDrawingMode(context, kCGTextFillStroke);
-//    if (updateDrawString1)
-//        CGContextShowTextAtPoint(context, 0, yOffsetDrawString, drawStringArray2, drawStringLength2);
-//    else
-//        CGContextShowTextAtPoint(context, 0, yOffsetDrawString, drawStringArray1, drawStringLength1);
-//}
-
 - (void)drawTextInContext:(CGContextRef)context fromConnection:(AVCaptureConnection *)connection {
-    
-//    AVCaptureVideoOrientation videoOrientation = connection.videoOrientation;
-//    NSString *string = [MJCaptureSessionPreset videoOrientationOrientationString:videoOrientation];
-//    NSLog(@"%s: videoOrientation:%@", __func__, string);
-    
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-//    NSString *string = [MJCaptureSessionPreset deviceOrientationString:deviceOrientation];
-//    NSLog(@"%s: deviceOrientation:%@", __func__, string);
-    
     CGContextSelectFont(context, "Helvetica", fontSize, kCGEncodingMacRoman);
     switch (deviceOrientation) {
         case UIDeviceOrientationLandscapeRight: {
@@ -230,6 +176,10 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
         CGContextShowTextAtPoint(context, 0, yOffsetDrawString, drawStringArray2, drawStringLength2);
     else
         CGContextShowTextAtPoint(context, 0, yOffsetDrawString, drawStringArray1, drawStringLength1);
+    
+//    CGFloat titleYOffset = height - (yOffsetDrawString * 2);
+    CGFloat titleYOffset = 0;
+    CGContextShowTextAtPoint(context, 0, titleYOffset, titleArray, drawTitleLength);
 }
 
 //- (void)addCaptureAudioDataToSession {
@@ -274,36 +224,36 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 }
 
 - (void)setMaxFrameRate{
-    NSLog( @"videoSupportedFrameRateRanges: %@", self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges);
-    AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
-    NSLog( @"minFrameRate: %f", range.minFrameRate);
-    NSLog( @"maxFrameRate: %f", range.maxFrameRate);
+    if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
+    } else {
+        self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
+        [self calculateFontSize];
 
-    self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
-    CMTime frameDuration = CMTimeMake(1, range.maxFrameRate);
-
-    NSError *error = nil;
-    if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
-        self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
-        self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-        [self.videoCaptureDevice unlockForConfiguration];
+        NSError *error = nil;
+        if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
+            AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
+            CMTime frameDuration = CMTimeMake(1, range.maxFrameRate);
+            self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
+            self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
+            [self.videoCaptureDevice unlockForConfiguration];
+        }
     }
 }
 
 - (void)setMinFrameRate{
-    NSLog( @"videoSupportedFrameRateRanges: %@", self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges);
-    AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
-    NSLog( @"minFrameRate: %f", range.minFrameRate);
-    NSLog( @"maxFrameRate: %f", range.maxFrameRate);
+    if (self.captureSession.sessionPreset == AVCaptureSessionPresetLow) {
+    } else {
+        self.captureSession.sessionPreset = AVCaptureSessionPresetLow;
+        [self calculateFontSize];
 
-    self.captureSession.sessionPreset = AVCaptureSessionPresetLow;
-    CMTime frameDuration = CMTimeMake(1, range.minFrameRate);
-
-    NSError *error = nil;
-    if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
-        self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
-        self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-        [self.videoCaptureDevice unlockForConfiguration];
+        NSError *error = nil;
+        if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
+            AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
+            CMTime frameDuration = CMTimeMake(1, range.minFrameRate);
+            self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
+            self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
+            [self.videoCaptureDevice unlockForConfiguration];
+        }
     }
 }
 
@@ -334,7 +284,6 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     if (! _videoWriter)
         [self setVideoWriter:[MJAssetWriter new]];
     
-    [self createBitmapContext];
     [self updateStatus];
     [[MJCameraTorch sharedManager] initWithCaptureDevice:self.videoCaptureDevice];
 }
@@ -681,35 +630,43 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 
 #pragma mark - Status
 
-- (void)initDrawStrings{
-    MJStatusManager *manager = [MJStatusManager sharedManager];
-    NSString *elapsedTimeString = [manager elapsedTimeString];
-    NSString *batteryLevelString = [manager batteryLevelString];
-    NSString *usedMemoryInKBString = [manager usedMemoryInKBString];
-    NSString *dropLabelString = [NSString stringWithFormat:@"%@/m", @(countDroppedSampleBuffer)];;
-    
-    NSString *timestamp = [PHCalendarCalculate timestampInShortShortFormat];
-    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ %@",
-                        timestamp, elapsedTimeString, batteryLevelString, dropLabelString, usedMemoryInKBString];
-    [self setDrawString1:statusString];
-    [self setDrawString2:statusString];
-    NSUInteger length = [self.drawString1 lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
-    drawStringLength1 = (size_t) length;
-    drawStringLength2 = (size_t) length;
-    cDrawString1 = [self.drawString1 cStringUsingEncoding:NSASCIIStringEncoding];
-    cDrawString2 = [self.drawString2 cStringUsingEncoding:NSASCIIStringEncoding];
-    if (cDrawString1) {
-        memset(&drawStringArray1, 0, sizeof(drawStringArray1));
-        memcpy(&drawStringArray1, cDrawString1, drawStringLength1);
-    }
-    if (cDrawString2) {
-        memset(&drawStringArray2, 0, sizeof(drawStringArray2));
-        memcpy(&drawStringArray2, cDrawString2, drawStringLength2);
-    }
-    
-    NSLog(@"%s: length:%ld, drawStringLength2:%zu, string: %s",
-          __func__, (unsigned long)length, drawStringLength2, drawStringArray1);
-}
+//- (void)initDrawStrings{
+//    MJStatusManager *manager = [MJStatusManager sharedManager];
+//    NSString *elapsedTimeString = [manager elapsedTimeString];
+//    NSString *batteryLevelString = [manager batteryLevelString];
+//    NSString *usedMemoryInKBString = [manager usedMemoryInKBString];
+//    NSString *dropLabelString = [NSString stringWithFormat:@"%@/m", @(countDroppedSampleBuffer)];;
+//
+//    NSString *timestamp = [PHCalendarCalculate timestampInShortShortFormat];
+//    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ %@",
+//                        timestamp, elapsedTimeString, batteryLevelString, dropLabelString, usedMemoryInKBString];
+//    [self setDrawString1:statusString];
+//    [self setDrawString2:statusString];
+//    self.drawTitle = @"By Security Robot";
+//
+//    NSUInteger length = [self.drawString1 lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
+//    drawStringLength1 = (size_t) length;
+//    drawStringLength2 = (size_t) length;
+//    drawTitleLength = (size_t) [self.drawTitle lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
+//
+//    cDrawString1 = [self.drawString1 cStringUsingEncoding:NSASCIIStringEncoding];
+//    cDrawString2 = [self.drawString2 cStringUsingEncoding:NSASCIIStringEncoding];
+//    cDrawTitle = [self.drawTitle cStringUsingEncoding:NSASCIIStringEncoding];
+//
+//    if (cDrawString1) {
+//        memset(&drawStringArray1, 0, sizeof(drawStringArray1));
+//        memcpy(&drawStringArray1, cDrawString1, drawStringLength1);
+//    }
+//    if (cDrawString2) {
+//        memset(&drawStringArray2, 0, sizeof(drawStringArray2));
+//        memcpy(&drawStringArray2, cDrawString2, drawStringLength2);
+//    }
+//    memset(&titleArray, 0, sizeof(titleArray));
+//    memcpy(&titleArray, cDrawTitle, drawTitleLength);
+//
+//    NSLog(@"%s: length:%ld, drawStringLength2:%zu, string: %s",
+//          __func__, (unsigned long)length, drawStringLength2, drawStringArray1);
+//}
 
 - (void)disableStatus {
     NSLog(@"%s", __func__);
@@ -738,8 +695,10 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     NSString *timestamp = [PHCalendarCalculate timestampInShortMediumFormat];
 //    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ Security Robot (c) 2020",
 //                        timestamp, elapsedTimeString, batteryLevelString, usedMemoryInKBString];
-    NSString *statusString = [NSString stringWithFormat:@"%@ %@ By Security Robot",
-                        timestamp, batteryLevelString];
+    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@",
+                        timestamp, batteryLevelString, usedMemoryInKBString];
+//    NSString *statusString = [NSString stringWithFormat:@"%@ %@",
+//                        timestamp, batteryLevelString];
 
     updateDrawString1 = ! updateDrawString1;
     if (updateDrawString1) {
@@ -760,11 +719,19 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
             memset(&drawStringArray2, 0, sizeof(drawStringArray2));
             memcpy(&drawStringArray2, cDrawString2, drawStringLength2);
         }
+        
     }
     
-    yOffsetDrawString = fontSize * (1*3/4.0); // 3/4.0
-    
+
+    yOffsetDrawString = fontSize * 1; // 3/4.0
+
     if (! self.timer) {
+        [self setDrawTitle:@"Security Robot (c) 2020"];
+        drawTitleLength = (size_t) [self.drawTitle lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
+        cDrawTitle = [self.drawTitle cStringUsingEncoding:NSASCIIStringEncoding];
+        memset(&titleArray, 0, sizeof(titleArray));
+        memcpy(&titleArray, cDrawTitle, drawTitleLength);
+
         NSTimeInterval interval = 3.0; // 1
         SEL sel = @selector(updateTimer:);
         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:sel userInfo:nil repeats:YES];

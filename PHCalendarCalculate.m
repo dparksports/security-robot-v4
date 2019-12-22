@@ -250,7 +250,7 @@
         [formatter setTimeStyle:NSDateFormatterMediumStyle];
     }
     
-    NSDate    *now = [NSDate date];
+    NSDate *now = [NSDate date];
     NSString *string = [formatter stringFromDate:now];
     return string;
 }
