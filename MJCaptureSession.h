@@ -26,6 +26,8 @@
 + (instancetype)sharedInstance;
 //- (void)addCaptureAudioDataToSession;
 - (void)addCaptureVideoDataToSession;
+
+- (void)startMaxRateTimer;
 - (void)toggleHighResoutionMode;
 - (void)setMaxFrameRate;
 - (void)setMinFrameRate;

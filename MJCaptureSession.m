@@ -38,7 +38,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureDevice *videoCaptureDevice;
 @property (nonatomic, strong) NSString *drawString1, *drawString2, *drawTitle;
-@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, strong) NSTimer *timer, *maxRateTimer;
 @end
 
 @implementation MJCaptureSession {
@@ -726,7 +726,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     yOffsetDrawString = fontSize * 1; // 3/4.0
 
     if (! self.timer) {
-        [self setDrawTitle:@"Security Robot (c) 2020"];
+        [self setDrawTitle:@"© 2020 Security Robot"];
         drawTitleLength = (size_t) [self.drawTitle lengthOfBytesUsingEncoding:NSASCIIStringEncoding];
         cDrawTitle = [self.drawTitle cStringUsingEncoding:NSASCIIStringEncoding];
         memset(&titleArray, 0, sizeof(titleArray));
@@ -755,6 +755,24 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     }
     countStatus++;
 }
+
+- (void)restoreMinRate:(NSTimer *)timer {
+    [timer invalidate];
+    [self setMinFrameRate];
+}
+
+- (void)startMaxRateTimer{
+    if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
+        [self.maxRateTimer invalidate];
+    }
+
+    NSTimeInterval interval = 30.0;
+    SEL sel = @selector(restoreMinRate:);
+    [self setMaxRateTimer:[NSTimer scheduledTimerWithTimeInterval:interval target:self selector:sel userInfo:nil repeats:NO]];
+    [self setMaxFrameRate];
+}
+
+
 
 #pragma mark - enableTracking
 
