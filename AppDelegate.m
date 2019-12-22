@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "getRated.h"
 @import Firebase;
 
 @interface AppDelegate ()
@@ -19,6 +20,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [FIRApp configure];
+    
+    [getRated sharedInstance].promptAtLaunch = NO;
+//    [getRated sharedInstance].usesUntilPrompt = 2;
+    
+    //enable preview mode - *** FOR TESTING ONLY ***
+//    [getRated sharedInstance].previewMode = YES;
+    /* _required_ */
+    //start GetRated - should be called AFTER any optional configuration options (above)
+    [[getRated sharedInstance] start];
     
     return YES;
 }
