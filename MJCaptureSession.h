@@ -26,6 +26,10 @@
 + (instancetype)sharedInstance;
 //- (void)addCaptureAudioDataToSession;
 - (void)addCaptureVideoDataToSession;
+- (void)toggleHighResoutionMode;
+- (void)setMaxFrameRate;
+- (void)setMinFrameRate;
+- (void)initStatusText;
 
 - (BOOL)isTorchAvailable;
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point;

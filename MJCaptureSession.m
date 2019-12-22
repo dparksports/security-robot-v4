@@ -250,6 +250,63 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 //    _audioConnection = [captureDataOutput connectionWithMediaType:AVMediaTypeAudio];
 //}
 
+- (void)toggleHighResoutionMode{
+    NSLog( @"videoSupportedFrameRateRanges: %@", self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges);
+    AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
+    NSLog( @"minFrameRate: %f", range.minFrameRate);
+    NSLog( @"maxFrameRate: %f", range.maxFrameRate);
+
+    CMTime  frameDuration;;
+    if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
+        self.captureSession.sessionPreset = AVCaptureSessionPresetLow;
+        frameDuration = CMTimeMake(1, range.minFrameRate);
+    } else {
+        self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
+        frameDuration = CMTimeMake(1, range.maxFrameRate);
+    }
+    
+    NSError *error = nil;
+    if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
+        self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
+        self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
+        [self.videoCaptureDevice unlockForConfiguration];
+    }
+}
+
+- (void)setMaxFrameRate{
+    NSLog( @"videoSupportedFrameRateRanges: %@", self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges);
+    AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
+    NSLog( @"minFrameRate: %f", range.minFrameRate);
+    NSLog( @"maxFrameRate: %f", range.maxFrameRate);
+
+    self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
+    CMTime frameDuration = CMTimeMake(1, range.maxFrameRate);
+
+    NSError *error = nil;
+    if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
+        self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
+        self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
+        [self.videoCaptureDevice unlockForConfiguration];
+    }
+}
+
+- (void)setMinFrameRate{
+    NSLog( @"videoSupportedFrameRateRanges: %@", self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges);
+    AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
+    NSLog( @"minFrameRate: %f", range.minFrameRate);
+    NSLog( @"maxFrameRate: %f", range.maxFrameRate);
+
+    self.captureSession.sessionPreset = AVCaptureSessionPresetLow;
+    CMTime frameDuration = CMTimeMake(1, range.minFrameRate);
+
+    NSError *error = nil;
+    if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
+        self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
+        self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
+        [self.videoCaptureDevice unlockForConfiguration];
+    }
+}
+
 - (void)addCaptureVideoDataToSession {
     
     NSError *error = nil;
@@ -272,53 +329,12 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     
     _videoConnection = [captureDataOutput connectionWithMediaType:AVMediaTypeVideo];
     
-    NSString *sessionPreset = AVCaptureSessionPresetLow;
-    // For single core systems like iPhone 4 and iPod Touch 4th Generation we use a lower resolution and framerate to maintain real-time performance.
-    int frameRate = 3; //10
-    if ( [NSProcessInfo processInfo].processorCount == 1 ) {
-        if ( [_captureSession canSetSessionPreset:AVCaptureSessionPreset352x288] )
-            sessionPreset = AVCaptureSessionPreset352x288;
-        frameRate = 3; //15
-    }
-    else {
-        // When using the CPU renderers or the CoreImage renderer we lower the resolution to 720p so that all devices can maintain real-time performance (this is primarily for A5 based devices like iPhone 4s and iPod Touch 5th Generation).
-        if ( [_captureSession canSetSessionPreset:AVCaptureSessionPreset352x288] )
-            sessionPreset = AVCaptureSessionPreset352x288;
-        frameRate = 3; //30
-    }
-    _captureSession.sessionPreset = sessionPreset;
-    
-    CMTime  frameDuration = CMTimeMake(1, frameRate);
-    if (@available(iOS 7, *)) {
-        AVFrameRateRange *range = captureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
-        NSLog( @"minFrameRate: %f", range.minFrameRate);
-        NSLog( @"maxFrameRate: %f", range.maxFrameRate);
-
-        frameDuration = CMTimeMake(1, range.minFrameRate);
-        if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
-            self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
-            self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-            [self.videoCaptureDevice unlockForConfiguration];
-        }
-        else NSLog( @"videoDevice lockForConfiguration returned error %@", error );
-    } else {
-        if ( _videoConnection.supportsVideoMinFrameDuration )
-            _videoConnection.videoMinFrameDuration = frameDuration;
-        if ( _videoConnection.supportsVideoMaxFrameDuration )
-            _videoConnection.videoMaxFrameDuration = frameDuration;
-    }
-    
-    NSLog(@"%s: videoMaxFrameDuration:%lld/%d", __func__,
-          _videoConnection.videoMaxFrameDuration.value,
-          _videoConnection.videoMaxFrameDuration.timescale);
-    
     if (! fileWritingQueue)
         fileWritingQueue = dispatch_queue_create("magicpoint.fileWritingQueue", DISPATCH_QUEUE_SERIAL);
     if (! _videoWriter)
         [self setVideoWriter:[MJAssetWriter new]];
     
     [self createBitmapContext];
-    [self initStatusText];
     [self updateStatus];
     [[MJCameraTorch sharedManager] initWithCaptureDevice:self.videoCaptureDevice];
 }
@@ -506,6 +522,34 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 #pragma mark - createNewWriterIfLargerThanMax
 
 
+- (void)createWriterIfEventAndStartWriting {
+    dispatch_async(fileWritingQueue, ^{
+        if (!finishWritingInProcess) {
+            finishWritingInProcess = YES;
+            NSLog(@"%s: finishWritingInProcess:%d", __func__, finishWritingInProcess);
+            
+            [self.videoWriter.assetWriter finishWritingWithCompletionHandler:^{
+                self.videoWriter.writerStartedSession = NO;
+                finishWritingInProcess = NO;
+                
+                NSError *error = self.videoWriter.assetWriter.error;
+                NSLog(@"%s: error:%@", __func__, [error localizedDescription]);
+                
+                AVAssetWriter *writer = [self.videoWriter createNewWriterByNextFileIndex];
+                [self resetWriterInputTransform:interfaceOrientation];
+                if ([writer startWriting]) {
+                    finishWritingInProcess = NO;
+                    NSLog(@"%s: finishWritingInProcess:%d", __func__, finishWritingInProcess);
+                    NSError *error = self.videoWriter.assetWriter.error;
+                    NSLog(@"%s: error:%@", __func__, [error localizedDescription]);
+                }
+                else NSLog(@"%s: error:%@", __func__, writer.error);
+            }];
+        }
+    });
+}
+
+
 - (void)createWriterIfLargerThanMaxAndStartWriting {
     dispatch_async(fileWritingQueue, ^{
         if (!finishWritingInProcess) {
@@ -550,6 +594,8 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 - (void)startRecord {
     NSString *string = NSStringFromSelector(_cmd);
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
+    [[MJStatusManager sharedManager] setStartDate:[NSDate date]];
+    [[MJStatusManager sharedManager] setEndDate:nil];
 
     dispatch_async(fileWritingQueue, ^{
         if (! self.videoWriter.assetWriter) {
@@ -578,7 +624,8 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 - (void)stopRecord {
     NSString *string = NSStringFromSelector(_cmd);
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
-    
+    [[MJStatusManager sharedManager] setEndDate:[NSDate date]];
+
     dispatch_async(fileWritingQueue, ^{
         finishWritingInProcess = YES;
         NSLog(@"%s: finishWritingInProcess:%d", __func__, finishWritingInProcess);
@@ -634,12 +681,6 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 
 #pragma mark - Status
 
-- (void)initStatusText {
-    NSDate *date = [NSDate date];
-    NSLog(@"%s: date:%@", __func__, date);
-    [[MJStatusManager sharedManager] setStartTimestamp:date];
-}
-
 - (void)initDrawStrings{
     MJStatusManager *manager = [MJStatusManager sharedManager];
     NSString *elapsedTimeString = [manager elapsedTimeString];
@@ -694,7 +735,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 //                           [MJCaptureSessionPreset sizeStringByPreset:sessionPreset],
 //                           frameDuration.timescale];
     
-    NSString *timestamp = [PHCalendarCalculate timestampInShortShortFormat];
+    NSString *timestamp = [PHCalendarCalculate timestampInShortMediumFormat];
 //    NSString *statusString = [NSString stringWithFormat:@"%@ %@ %@ %@ Security Robot (c) 2020",
 //                        timestamp, elapsedTimeString, batteryLevelString, usedMemoryInKBString];
     NSString *statusString = [NSString stringWithFormat:@"%@ %@ By Security Robot",

@@ -65,6 +65,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
     
 //    [self restoreScreenDim];
+    [self saveBrightness];
     [self configureButtonWithColor:[UIColor whiteColor] progressColor:[UIColor redColor]];
 }
 
@@ -242,15 +243,21 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 - (void)restoreScreenDim {
     NSLog(@"%s", __func__);
 
-    originalBrightness = 1/2.0;
+//    originalBrightness = 0.7;
     [self undimScreen];
+}
+
+- (void)saveBrightness {
+    NSLog(@"%s", __func__);
+    originalBrightness = [UIScreen mainScreen].brightness;
+    NSLog( @"originalBrightness: %f", originalBrightness);
 }
 
 - (void)undimScreen {
     NSLog(@"%s", __func__);
     UIScreen *screen = [UIScreen mainScreen];
     screen.wantsSoftwareDimming = YES;
-    screen.brightness = originalBrightness;
+    screen.brightness = originalBrightness; // crashes on app resign
     self.view.alpha = 1.0;
     [self enableCaptureConnection];
 }
@@ -280,10 +287,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (void)updateStatus {
-
     MJStatusManager *manager = [MJStatusManager sharedManager];
-    runTimeLabel.text = [manager elapsedTimeString];
     
+//    runTimeLabel.text = ([captureSession isRecording]) ? [manager elapsedTimeString] : @"0:00:00";
+    runTimeLabel.text = [manager elapsedTimeString];
     recordingLabel.text = ([captureSession isRecording]) ? @"Recording ON" : @"Recording OFF";
     batteryLabel.text = [manager batteryLevelString];
     memLabel.text = [manager usedMemoryInKBString];
@@ -420,7 +427,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
          NSString *string = [NSString stringWithFormat:@"%s", __func__];
          [MJLogFileManager logStringToFile:string file:@"log.txt"];
          
-         [self restoreScreenDim];
+//         [self restoreScreenDim]; // crashes on app resign
      }];
 }
 
@@ -518,14 +525,14 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 
 - (void)saveImageView{
     if (self.saveImage) {
-//        UIImageWriteToSavedPhotosAlbum(
-//                self.saveImage,
-//                self,
-//                @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
-//                NULL);
-//        imageView.image = nil;
-//        NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
-//        [MJLogFileManager logStringToFile:string file:@"log.txt"];
+        UIImageWriteToSavedPhotosAlbum(
+                self.saveImage,
+                self,
+                @selector(imageSavedToPhotosAlbum: didFinishSavingWithError: contextInfo:),
+                NULL);
+        imageView.image = nil;
+        NSString *string = [NSString stringWithFormat:@"%s: UIImageWriteToSavedPhotosAlbum", __func__];
+        [MJLogFileManager logStringToFile:string file:@"log.txt"];
     }
 }
 
@@ -533,12 +540,15 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     NSString *string = [NSString stringWithFormat:@"%s", __func__];
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
 
+    [captureSession setMaxFrameRate];
+
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self setSaveImage:captureSession.createdImage];
-        [self saveImageView];
+//        [self saveImageView];
+        
     });
     [captureSession setCreateImage:YES];
-
+    
     [self focusAndExposeAtLastFocusPoint];
 }
 
@@ -576,15 +586,19 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (IBAction)toggleRecord:(id)sender {
+
     NSString *string = NSStringFromSelector(_cmd);
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
     
     BOOL isRecording = [captureSession isRecording];
-    if (isRecording)
+    if (isRecording) {
         [self stopRecording:nil];
-    else {
-        if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive)
+        [captureSession setMaxFrameRate];
+    } else {
+        [captureSession setMinFrameRate];
+        if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
             [captureSession startRecord];
+        }
         else {
             NSString *string = [NSString stringWithFormat:@"%s: NOT UIApplicationStateActive", __func__];
             [MJLogFileManager logStringToFile:string file:@"log.txt"];
