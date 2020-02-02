@@ -595,7 +595,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         [self stopRecording:nil];
         [captureSession setMaxFrameRate];
     } else {
-        [captureSession setMinFrameRate];
+        [captureSession setMaxFrameRate];
+//        [captureSession setMinFrameRate];
         if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
             [captureSession startRecord];
         }
@@ -646,7 +647,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (IBAction)toggleLight:(id)sender {
-    [[MJCameraTorch sharedManager] toggleTorch];
+//    [[MJCameraTorch sharedManager] toggleTorch];
+//    [captureSession setMaxFrameRate];
+//    [captureSession setMediumFrameRate];
+    [captureSession toggleZoom];
 }
 
 @end

@@ -29,8 +29,15 @@
 
 - (void)startMaxRateTimer;
 - (void)toggleHighResoutionMode;
+
 - (void)setMaxFrameRate;
 - (void)setMinFrameRate;
+- (void)setMediumFrameRate;
+
+- (void)setMinZoom;
+- (void)setMaxZoom;
+- (void)toggleZoom;
+
 - (void)initStatusText;
 
 - (BOOL)isTorchAvailable;
