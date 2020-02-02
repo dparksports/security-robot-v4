@@ -595,7 +595,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         [self stopRecording:nil];
         [captureSession setMaxFrameRate];
     } else {
-        [captureSession setMediumFrameRate];
+//        [captureSession setMinFrameRate]; // works
+//        [captureSession setMediumFrameRate]; // works
+        [captureSession set5MaxFrameRate];
+        
         if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
             [captureSession startRecord];
         }

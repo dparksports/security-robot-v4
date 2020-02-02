@@ -33,6 +33,7 @@
 - (void)setMaxFrameRate;
 - (void)setMinFrameRate;
 - (void)setMediumFrameRate;
+- (void)set5MaxFrameRate;
 
 - (void)setMinZoom;
 - (void)setMaxZoom;
