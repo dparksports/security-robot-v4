@@ -595,8 +595,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         [self stopRecording:nil];
         [captureSession setMaxFrameRate];
     } else {
-        [captureSession setMaxFrameRate];
-//        [captureSession setMinFrameRate];
+        [captureSession setMediumFrameRate];
         if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
             [captureSession startRecord];
         }
@@ -604,8 +603,6 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
             NSString *string = [NSString stringWithFormat:@"%s: NOT UIApplicationStateActive", __func__];
             [MJLogFileManager logStringToFile:string file:@"log.txt"];
         }
-        
-//        [startButtonPanel toggleLogoPanel:YES];
     }
 }
 

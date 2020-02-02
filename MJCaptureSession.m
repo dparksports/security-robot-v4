@@ -236,24 +236,17 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
             CMTime frameDuration = CMTimeMake(1, range.maxFrameRate);
             self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
             self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-            if (@available(iOS 11.0, *)) {
+            self.videoCaptureDevice.videoZoomFactor = 2.0;
+//            if (@available(iOS 11.0, *)) {
 //                self.videoCaptureDevice.videoZoomFactor = self.videoCaptureDevice.maxAvailableVideoZoomFactor;
-                self.videoCaptureDevice.videoZoomFactor = 2.0;
-            } else {
-                // Fallback on earlier versions
-            }
-
+//            } else {
+//            }
             [self.videoCaptureDevice unlockForConfiguration];
         }
     }
 }
 
 - (void)setMinFrameRate{
-    if (@available(iOS 11.0, *)) {
-        NSLog( @"minAvailableVideoZoomFactor: %f", self.videoCaptureDevice.minAvailableVideoZoomFactor);
-        NSLog( @"maxAvailableVideoZoomFactor: %f", self.videoCaptureDevice.maxAvailableVideoZoomFactor);
-    }
-
     if (self.captureSession.sessionPreset == AVCaptureSessionPresetLow) {
     } else {
         self.captureSession.sessionPreset = AVCaptureSessionPresetLow;
@@ -265,11 +258,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
             CMTime frameDuration = CMTimeMake(1, range.minFrameRate);
             self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
             self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-            if (@available(iOS 11.0, *)) {
-                self.videoCaptureDevice.videoZoomFactor = self.videoCaptureDevice.minAvailableVideoZoomFactor;
-            } else {
-                // Fallback on earlier versions
-            }
+            self.videoCaptureDevice.videoZoomFactor = 1.0;
             [self.videoCaptureDevice unlockForConfiguration];
         }
     }
@@ -284,14 +273,10 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
         NSError *error = nil;
         if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
             AVFrameRateRange *range = self.videoCaptureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject;
-            CMTime frameDuration = CMTimeMake(1, range.minFrameRate);
+            CMTime frameDuration = CMTimeMake(1, range.minFrameRate * 2);
             self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
             self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-            if (@available(iOS 11.0, *)) {
-                self.videoCaptureDevice.videoZoomFactor = self.videoCaptureDevice.maxAvailableVideoZoomFactor;
-            } else {
-                // Fallback on earlier versions
-            }
+            self.videoCaptureDevice.videoZoomFactor = 1.0;
             [self.videoCaptureDevice unlockForConfiguration];
         }
     }
@@ -306,6 +291,11 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 }
 
 - (void)setMinZoom{
+    if (@available(iOS 11.0, *)) {
+        NSLog( @"minAvailableVideoZoomFactor: %f", self.videoCaptureDevice.minAvailableVideoZoomFactor);
+        NSLog( @"maxAvailableVideoZoomFactor: %f", self.videoCaptureDevice.maxAvailableVideoZoomFactor);
+    }
+
     self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
     [self calculateFontSize];
     
@@ -321,11 +311,11 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 }
 
 - (void)setMaxZoom{
-    CGFloat videoZoomFactor = 2.0;
-    if (@available(iOS 11.0, *)) {
-        videoZoomFactor = self.videoCaptureDevice.maxAvailableVideoZoomFactor;
-    } else {
-    }
+//    CGFloat videoZoomFactor = 2.0;
+//    if (@available(iOS 11.0, *)) {
+//        videoZoomFactor = self.videoCaptureDevice.maxAvailableVideoZoomFactor;
+//    } else {
+//    }
 
     self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
     [self calculateFontSize];
@@ -336,7 +326,7 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
         CMTime frameDuration = CMTimeMake(1, range.maxFrameRate);
         self.videoCaptureDevice.activeVideoMaxFrameDuration = frameDuration;
         self.videoCaptureDevice.activeVideoMinFrameDuration = frameDuration;
-        self.videoCaptureDevice.videoZoomFactor = videoZoomFactor;
+        self.videoCaptureDevice.videoZoomFactor = 2.0;
         [self.videoCaptureDevice unlockForConfiguration];
     }
 }
@@ -846,13 +836,19 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     [self setMinFrameRate];
 }
 
+- (void)restoreMediumRate:(NSTimer *)timer {
+    [timer invalidate];
+    [self setMediumFrameRate];
+}
+
 - (void)startMaxRateTimer{
     if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
         [self.maxRateTimer invalidate];
     }
 
-    NSTimeInterval interval = 30.0;
-    SEL sel = @selector(restoreMinRate:);
+    NSTimeInterval interval = 30.0 * 2;
+//    SEL sel = @selector(restoreMinRate:);
+    SEL sel = @selector(restoreMediumRate:);
     [self setMaxRateTimer:[NSTimer scheduledTimerWithTimeInterval:interval target:self selector:sel userInfo:nil repeats:NO]];
     [self setMaxFrameRate];
 }
