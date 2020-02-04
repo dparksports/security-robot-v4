@@ -39,8 +39,6 @@
 - (void)setMaxZoom;
 - (void)toggleZoom;
 
-- (void)initStatusText;
-
 - (BOOL)isTorchAvailable;
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point;
 

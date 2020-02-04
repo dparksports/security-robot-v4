@@ -98,6 +98,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         
         UIInterfaceOrientation interfaceOrientation = [self interfaceOrientation];
         [self resetVideoOrientation:interfaceOrientation];
+        
+        session.sessionPreset = AVCaptureSessionPresetHigh;
     }
     
     if (! [session isRunning]) {
@@ -443,7 +445,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
          
          dispatch_queue_t queue = dispatch_get_main_queue();
          dispatch_async(queue, ^() {
-             [self restoreScreenDim];
+//             [self restoreScreenDim];
          });
      }];
 }
@@ -460,7 +462,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
          
          dispatch_queue_t queue = dispatch_get_main_queue();
          dispatch_async(queue, ^() {
-             [self restoreScreenDim];
+//             [self restoreScreenDim];
          });
      }];
 }
@@ -586,7 +588,6 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (IBAction)toggleRecord:(id)sender {
-
     NSString *string = NSStringFromSelector(_cmd);
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
     
@@ -595,9 +596,8 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
         [self stopRecording:nil];
         [captureSession setMaxFrameRate];
     } else {
-//        [captureSession setMinFrameRate]; // works
+        [captureSession setMinFrameRate]; // works
 //        [captureSession setMediumFrameRate]; // works
-        [captureSession set5MaxFrameRate];
         
         if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
             [captureSession startRecord];
@@ -647,10 +647,11 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (IBAction)toggleLight:(id)sender {
+    [captureSession toggleZoom];
+    
 //    [[MJCameraTorch sharedManager] toggleTorch];
 //    [captureSession setMaxFrameRate];
 //    [captureSession setMediumFrameRate];
-    [captureSession toggleZoom];
 }
 
 @end
