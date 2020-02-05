@@ -542,11 +542,11 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     NSString *string = [NSString stringWithFormat:@"%s", __func__];
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
 
-    [captureSession startMaxRateTimer];
+//    [captureSession startMaxRateTimer];
 
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self setSaveImage:captureSession.createdImage];
-//        [self saveImageView];
+        [self saveImageView];
         
     });
     [captureSession setCreateImage:YES];
@@ -647,11 +647,23 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 }
 
 - (IBAction)toggleLight:(id)sender {
+    [[MJCameraTorch sharedManager] toggleTorch];
+}
+
+- (IBAction)toggleZoom:(id)sender {
     [captureSession toggleZoom];
     
 //    [[MJCameraTorch sharedManager] toggleTorch];
 //    [captureSession setMaxFrameRate];
 //    [captureSession setMediumFrameRate];
+}
+
+- (IBAction)activateMainLens:(id)sender {
+    [captureSession activateMainLens];
+}
+
+- (IBAction)activateTelephotoLens:(id)sender {
+    [captureSession activateTelephotoLens];
 }
 
 @end

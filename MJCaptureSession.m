@@ -106,33 +106,47 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 #pragma mark - AVCaptureDevice
 
 - (CGFloat)calculateFontSize {
+    float standardFontSize = 12;
+
+    float aspectRatio = width / (height * 1.0);
+    float standardRowsH = 10.0;
+    float standardRowsW = aspectRatio * standardRowsH;
+    
+    float rowH = height / standardRowsH;
+    float rowW = width / standardRowsW;
+
+    // 1920x1080: factor = 9
+    // 1024x968: factor = 3?
+    int factorH = rowH / standardFontSize;
+    int factorW = rowW / standardFontSize;
+
     if (self.captureSession.sessionPreset == AVCaptureSessionPresetHigh) {
         if (UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation])) {
-            fontSize = 12 * 6;
+            fontSize = standardFontSize * (factorH - 3);
         } else {
-            fontSize = 12 * 5;
+            fontSize = standardFontSize * (factorW - 3);
         }
     } else {
         if (self.captureSession.sessionPreset == AVCaptureSessionPresetMedium) {
             if (UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation])) {
-                fontSize = 12 * 2;
+                fontSize = standardFontSize * (factorH - 3);
             } else {
-                fontSize = 12 * 2;
+                fontSize = standardFontSize * (factorW - 3);
             }
         } else {
             if (self.captureSession.sessionPreset == AVCaptureSessionPresetLow) {
                 if (UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation])) {
-                    fontSize = 12 * 1;
+                    fontSize = standardFontSize * 1;
                 } else {
-                    fontSize = 11;
+                    fontSize = standardFontSize - 1;
                 }
             } else {
-                fontSize = 12 * 1;
+                
+                fontSize = standardFontSize * 3;
             }
         }
     }
     
-//    fontSize = [MJCaptureSessionPreset fontSizeBySessionPreset:self.captureSession.sessionPreset];
     return fontSize;
 }
 
@@ -146,7 +160,9 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     switch (deviceOrientation) {
         case UIDeviceOrientationLandscapeRight: {
             // hide title, while scrubbing: (row - 2)
-            titleYOffset = ( rows - 2 ) * fontSize;
+            // (rows - 2) : iPhone Max
+            // (rows - 2.5) : iPad 2
+            titleYOffset = ( rows - 2.5 ) * fontSize; //
             // show stamp, while scrubbing:
             stampYOffset = fontSize * 1.5;
 
@@ -232,12 +248,9 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
 //    _audioConnection = [captureDataOutput connectionWithMediaType:AVMediaTypeAudio];
 //}
 
-CGFloat maxZoomFactor = 8.0;
-CGFloat minZoomFactor = 1.0;
-
-CGFloat maxFrameRate = 30.0;
-CGFloat mediumFrameRate = 10.0;
-CGFloat minFrameRate = 5.0;
+CGFloat maxFrameRate = 10.0;
+CGFloat mediumFrameRate = 5.0;
+CGFloat minFrameRate = 4.0; //5.0
 
 - (void)setMaxFrameRate{
     NSError *error = nil;
@@ -269,41 +282,51 @@ CGFloat minFrameRate = 5.0;
     }
 }
 
-- (void)toggleZoom{
+CGFloat maxZoomFactor = 4.0;
+CGFloat minZoomFactor = 1.0;
+
+- (void)activateMainLens{
     dispatch_async(videoCaptureQueue, ^{
         [self.captureSession removeInput:self.inputDevice];
-        
-        NSError *error = nil;
-        if (self.inputDevice.device.deviceType != AVCaptureDeviceTypeBuiltInTelephotoCamera) {
-            
-            AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
 
-            NSError *error = nil;
-            AVCaptureDeviceInput *captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device error:&error];
-            if (error)
-                NSLog(@"%s: error:%@", __func__, error);
-            else {
-                self.inputDevice = captureDeviceInput;
-                if ([self.captureSession canAddInput:captureDeviceInput])
-                    [self.captureSession addInput:captureDeviceInput];
-            }
-        }
+        AVCaptureDevice *device = [[MJCaptureDevice new] videoDeviceWithPosition:AVCaptureDevicePositionBack];
+        [self setVideoCaptureDevice:device];
+
+        NSError *error = nil;
+        AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device
+                                                                                  error:&error];
+        if (error)
+            NSLog(@"%s: error:%@", __func__, error);
         else {
-            
-            AVCaptureDevice *captureDevice = [[MJCaptureDevice new] videoDeviceWithPosition:AVCaptureDevicePositionBack];
-            [self setVideoCaptureDevice:captureDevice];
-            
-            AVCaptureDeviceInput *captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoCaptureDevice error:&error];
-            if (error)
-                NSLog(@"%s: error:%@", __func__, error);
-            else {
-                self.inputDevice = captureDeviceInput;
-                if ([self.captureSession canAddInput:captureDeviceInput])
-                    [self.captureSession addInput:captureDeviceInput];
-            }
+            self.inputDevice = deviceInput;
+            if ([self.captureSession canAddInput:deviceInput])
+                [self.captureSession addInput:deviceInput];
         }
     });
+}
 
+- (void)activateTelephotoLens{
+    dispatch_async(videoCaptureQueue, ^{
+        [self.captureSession removeInput:self.inputDevice];
+
+        AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera
+                                   mediaType:AVMediaTypeVideo
+                                    position:AVCaptureDevicePositionBack];
+
+        NSError *error = nil;
+        AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device
+                                                                                  error:&error];
+        if (error)
+            NSLog(@"%s: error:%@", __func__, error);
+        else {
+            self.inputDevice = deviceInput;
+            if ([self.captureSession canAddInput:deviceInput])
+                [self.captureSession addInput:deviceInput];
+        }
+    });
+}
+
+- (void)toggleZoom{
     if (self.videoCaptureDevice.videoZoomFactor == minZoomFactor) {
         [self setMaxZoom];
     } else {
@@ -312,11 +335,6 @@ CGFloat minFrameRate = 5.0;
 }
 
 - (void)setMinZoom{
-    if (@available(iOS 11.0, *)) {
-        NSLog( @"minAvailableVideoZoomFactor: %f", self.videoCaptureDevice.minAvailableVideoZoomFactor);
-        NSLog( @"maxAvailableVideoZoomFactor: %f", self.videoCaptureDevice.maxAvailableVideoZoomFactor);
-    }
-
     NSError *error = nil;
     if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
         self.videoCaptureDevice.videoZoomFactor = minZoomFactor;
@@ -325,21 +343,38 @@ CGFloat minFrameRate = 5.0;
 }
 
 - (void)setMaxZoom{
+    if (@available(iOS 11.0, *)) {
+        NSLog( @"minAvailableVideoZoomFactor: %f", self.videoCaptureDevice.minAvailableVideoZoomFactor);
+        NSLog( @"maxAvailableVideoZoomFactor: %f", self.videoCaptureDevice.maxAvailableVideoZoomFactor);
+        NSLog( @"videoMaxZoomFactor: %f", self.videoCaptureDevice.activeFormat.videoMaxZoomFactor);
+    }
+    
+    if (maxZoomFactor > self.videoCaptureDevice.activeFormat.videoMaxZoomFactor ) {
+        maxZoomFactor = self.videoCaptureDevice.activeFormat.videoMaxZoomFactor;
+    }
+    
     NSError *error = nil;
     if ( [self.videoCaptureDevice lockForConfiguration:&error] ) {
-        if (@available(iOS 11.0, *)) {
-            self.videoCaptureDevice.videoZoomFactor = self.videoCaptureDevice.maxAvailableVideoZoomFactor;
-        } else {
-            self.videoCaptureDevice.videoZoomFactor = 2.0;
-        }
+        self.videoCaptureDevice.videoZoomFactor = maxZoomFactor;
         [self.videoCaptureDevice unlockForConfiguration];
     }
 }
 
 - (void)addCaptureVideoDataToSession {
-    
+    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera
+                                                                 mediaType:AVMediaTypeVideo
+                                                                  position:AVCaptureDevicePositionBack];
+    if (captureDevice) {
+        [self setVideoCaptureDevice:captureDevice];
+    } else {
+        NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        for (AVCaptureDevice *captureDevice in devices)
+            if ([captureDevice position] == AVCaptureDevicePositionBack)
+                [self setVideoCaptureDevice:captureDevice];
+    }
+
     NSError *error = nil;
-    AVCaptureDevice *captureDevice = [[MJCaptureDevice new] videoDeviceWithPosition:AVCaptureDevicePositionBack];
+//    AVCaptureDevice *captureDevice = [[MJCaptureDevice new] videoDeviceWithPosition:AVCaptureDevicePositionBack];
     [self setVideoCaptureDevice:captureDevice];
     
     AVCaptureDeviceInput *captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.videoCaptureDevice error:&error];
@@ -484,7 +519,9 @@ CGFloat minFrameRate = 5.0;
         height = CVPixelBufferGetHeight(pixelBuffer);
         size = CGSizeMake(width, height);
         isPlanar = CVPixelBufferIsPlanar(pixelBuffer);
-        
+//        NSLog( @"height: %zu", height);
+//        NSLog( @"width: %zu", width);
+
         if (! isPlanar) {
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             void *sourceBaseAddr = (uint8_t *)CVPixelBufferGetBaseAddress(pixelBuffer);
@@ -792,14 +829,16 @@ CGFloat minFrameRate = 5.0;
     countStatus++;
 }
 
-- (void)restoreMinRate:(NSTimer *)timer {
-    [timer invalidate];
-    [self setMinFrameRate];
-}
-
 - (void)restoreMediumRate:(NSTimer *)timer {
     [timer invalidate];
     [self setMediumFrameRate];
+    [self setMinZoom];
+}
+
+- (void)restoreMinRate:(NSTimer *)timer {
+    [timer invalidate];
+    [self setMinFrameRate];
+    [self setMinZoom];
 }
 
 - (void)startMaxRateTimer{
@@ -811,7 +850,8 @@ CGFloat minFrameRate = 5.0;
     SEL sel = @selector(restoreMinRate:);
     [self setMaxRateTimer:[NSTimer scheduledTimerWithTimeInterval:interval target:self selector:sel userInfo:nil repeats:NO]];
     [self setMaxFrameRate];
-}
+    [self setMaxZoom];
+} 
 
 
 

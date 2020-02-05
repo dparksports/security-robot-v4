@@ -183,46 +183,101 @@
                                             <outlet property="logoPanel" destination="hBo-lR-EDx" id="BJS-MM-QL7"/>
                                         </connections>
                                     </view>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K1a-YN-9yb">
-                                        <rect key="frame" x="270" y="77" width="60" height="44"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K1a-YN-9yb" userLabel="Zoom">
+                                        <rect key="frame" x="8" y="162" width="158" height="44"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="60" id="7Xg-Ss-YwT"/>
+                                            <constraint firstAttribute="width" constant="158" id="7Xg-Ss-YwT"/>
                                             <constraint firstAttribute="height" constant="44" id="aTp-pM-IRx"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="18"/>
-                                        <state key="normal" title="ZOOM">
-                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
+                                        <state key="normal" title="Zoom X4">
+                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                         <connections>
-                                            <action selector="toggleLight:" destination="BYZ-38-t0r" eventType="touchUpInside" id="V1P-yq-9e9"/>
+                                            <action selector="toggleZoom:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EI4-fm-es6"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tGl-uY-4zd">
+                                        <rect key="frame" x="8" y="59" width="158" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="baL-Bo-J4e"/>
+                                            <constraint firstAttribute="width" constant="158" id="eQW-Ve-kqu"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
+                                        <state key="normal" title="Telephoto Lens">
+                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="activateTelephotoLens:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4Xb-gd-8uJ"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1MC-AE-pJS">
+                                        <rect key="frame" x="8" y="214" width="158" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="158" id="MS2-p3-Vig"/>
+                                            <constraint firstAttribute="height" constant="44" id="rSg-Tb-kEy"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
+                                        <state key="normal" title="Torch">
+                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="toggleLight:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xuy-74-2Ik"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m0y-wF-KOX">
+                                        <rect key="frame" x="8" y="104" width="158" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="CkM-HW-IlO"/>
+                                            <constraint firstAttribute="width" constant="158" id="dBZ-r6-mLA"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
+                                        <state key="normal" title="Main Lens">
+                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="activateMainLens:" destination="BYZ-38-t0r" eventType="touchUpInside" id="S4L-ve-Rps"/>
                                         </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="centerX" secondItem="K1a-YN-9yb" secondAttribute="centerX" id="2jJ-Ac-Ly5"/>
+                                    <constraint firstItem="K1a-YN-9yb" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="1Fj-CE-FVy"/>
                                     <constraint firstItem="MKj-zU-ifZ" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="20" symbolic="YES" id="4lz-LM-n0X"/>
                                     <constraint firstItem="uHB-cz-Pmf" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="104" id="5U9-G5-tIV"/>
+                                    <constraint firstItem="1MC-AE-pJS" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="214" id="5rX-Kd-Qjy"/>
                                     <constraint firstItem="uyl-fh-xm4" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="76" id="6Gg-Xx-CTQ"/>
                                     <constraint firstItem="OVy-CI-Z0Q" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" id="Av4-ZL-gdQ"/>
+                                    <constraint firstItem="tGl-uY-4zd" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="59" id="Iog-jw-Z3f"/>
                                     <constraint firstItem="ugd-jI-3yU" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="33" id="LkI-eb-jpW"/>
                                     <constraint firstAttribute="trailing" secondItem="uyl-fh-xm4" secondAttribute="trailing" constant="8" id="Mx9-Rc-H8X"/>
                                     <constraint firstAttribute="trailing" secondItem="uHB-cz-Pmf" secondAttribute="trailing" constant="8" id="N7I-bJ-n3r"/>
+                                    <constraint firstItem="tGl-uY-4zd" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="Nye-5H-Fbc"/>
                                     <constraint firstAttribute="bottom" secondItem="ISF-dL-hng" secondAttribute="bottom" constant="6" id="Nza-iw-sHx"/>
                                     <constraint firstAttribute="bottom" secondItem="zA3-JO-rsr" secondAttribute="bottom" constant="18" id="Oa8-Qh-JHs"/>
-                                    <constraint firstItem="K1a-YN-9yb" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="77" id="QyL-ch-wc6"/>
                                     <constraint firstAttribute="trailing" secondItem="fA2-AO-BnE" secondAttribute="trailing" constant="8" id="S8p-ba-25x"/>
                                     <constraint firstAttribute="bottom" secondItem="fA2-AO-BnE" secondAttribute="bottom" constant="6" id="Tyh-nK-u40"/>
                                     <constraint firstAttribute="bottom" secondItem="MKj-zU-ifZ" secondAttribute="bottom" constant="6" id="Wir-VJ-Vdo"/>
                                     <constraint firstAttribute="centerX" secondItem="zA3-JO-rsr" secondAttribute="centerX" id="Xnr-a3-iAC"/>
                                     <constraint firstAttribute="trailing" secondItem="OVy-CI-Z0Q" secondAttribute="trailing" id="Y7M-SQ-wvT"/>
                                     <constraint firstItem="MKj-zU-ifZ" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="20" id="ZJN-LM-Bwq"/>
+                                    <constraint firstItem="1MC-AE-pJS" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="a4f-JM-1Vs"/>
+                                    <constraint firstItem="m0y-wF-KOX" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="d9Z-ez-WcH"/>
+                                    <constraint firstItem="K1a-YN-9yb" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="162" id="fQ5-3j-ahz"/>
                                     <constraint firstItem="ll9-Od-ynu" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="33" id="iQE-k8-wFi"/>
                                     <constraint firstItem="ISF-dL-hng" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="20" id="l7y-pM-k73"/>
                                     <constraint firstAttribute="bottom" secondItem="OVy-CI-Z0Q" secondAttribute="bottom" constant="-15" id="luj-vX-3go"/>
                                     <constraint firstItem="OVy-CI-Z0Q" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="15" id="lzS-eU-GRG"/>
                                     <constraint firstAttribute="trailing" secondItem="ugd-jI-3yU" secondAttribute="trailing" constant="8" id="qO0-Lb-PwR"/>
                                     <constraint firstItem="ll9-Od-ynu" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="uJH-kP-mNi"/>
+                                    <constraint firstItem="m0y-wF-KOX" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="104" id="vya-mi-fwC"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -286,7 +341,7 @@
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="296" y="452"/>
+            <point key="canvasLocation" x="295.19999999999999" y="451.12443778110946"/>
         </scene>
         <!--Folder Controller-->
         <scene sceneID="RU8-dM-RYZ">
