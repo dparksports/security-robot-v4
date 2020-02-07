@@ -156,15 +156,32 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     CGFloat titleYOffset = 0;
     CGFloat stampYOffset = ( rows - 1 ) * fontSize;  // for low res, stamp is clipped at top.
 
+    CGFloat width5S = 320;
+    CGFloat heigh5S = 568;
+    CGFloat width6Plus = 414;
+    CGFloat height6Plus = 736;
+
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     switch (deviceOrientation) {
         case UIDeviceOrientationLandscapeRight: {
             // hide title, while scrubbing: (row - 2)
             // (rows - 2) : iPhone Max
             // (rows - 2.5) : iPad 2
-            titleYOffset = ( rows - 2.5 ) * fontSize; //
+            titleYOffset = ( rows - 2.5 ) * fontSize;
+            
             // show stamp, while scrubbing:
-            stampYOffset = fontSize * 1.5;
+            if (UIScreen.mainScreen.bounds.size.height == width5S) {
+                // 5s: *2.6
+                stampYOffset = fontSize * 2.6;
+            } else {
+                if (UIScreen.mainScreen.bounds.size.height == width6Plus) {
+                    // 6Plus: *0.6
+                    stampYOffset = fontSize * 0.7;
+                } else {
+                    // Pro11Max: *2.5
+                    stampYOffset = fontSize * 1.5;
+                }
+            }
 
             CGFloat tx = size.width * 1.0;
             CGFloat ty = size.height * (28/30.0);
@@ -178,8 +195,20 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
         case UIDeviceOrientationLandscapeLeft: {
             // hide title, while scrubbing: (row - 1)
             titleYOffset = ( rows - 1 ) * fontSize;
+            
             // show stamp, while scrubbing:
-            stampYOffset = fontSize * 2.5;
+            if (UIScreen.mainScreen.bounds.size.height == width5S) {
+                // 5s: *3.6
+                stampYOffset = fontSize * 3.6;
+            } else {
+                if (UIScreen.mainScreen.bounds.size.height == width6Plus) {
+                    // 6Plus: *1.9
+                    stampYOffset = fontSize * 1.7;
+                } else {
+                    // Pro11Max: *2.5
+                    stampYOffset = fontSize * 2.5;
+                }
+            }
 
             CGFloat degrees = 0;
             CGFloat angleInRadians = degrees * M_PI/180.0;
@@ -194,8 +223,20 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
             rows = width / fontSize;
             // show title, while scrubbing: (row - 3)
             titleYOffset = ( rows - 3.5 ) * fontSize;
+            
             // show stamp, while scrubbing:
-            stampYOffset = fontSize;
+            if (UIScreen.mainScreen.bounds.size.height == heigh5S) {
+                // 5s: *3.6
+                stampYOffset = fontSize * 3.6;
+            } else {
+                if (UIScreen.mainScreen.bounds.size.height == height6Plus) {
+                    // 6Plus: *2.4
+                    stampYOffset = fontSize * 2.4;
+                } else {
+                    // Pro11Max: *1.0
+                    stampYOffset = fontSize * 1.0;
+                }
+            }
 
             CGFloat tx = size.width * (19/20.0);
             CGFloat ty = size.height * 0;
