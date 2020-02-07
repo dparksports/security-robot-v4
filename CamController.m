@@ -40,12 +40,16 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     __weak IBOutlet UILabel *memLabel;
     __weak IBOutlet UILabel *runTimeLabel;
     __weak IBOutlet SDRecordButton *recordButton;
-    __weak IBOutlet UIButton *torchButton;
     __weak IBOutlet MJPreviewLayerView *previewLayerView;
     __weak IBOutlet UIImageView *imageView;
     __weak IBOutlet MJCirclePane *iCirclePanel;
     __weak IBOutlet MJStartButtonPanel *startButtonPanel;
-    
+
+    __weak IBOutlet UIButton *torchButton;
+    __weak IBOutlet UIButton *zoomButton;
+    __weak IBOutlet UIButton *telephotoLensButton;
+    __weak IBOutlet UIButton *mainLensButton;
+
     UIBackgroundTaskIdentifier backgroundTaskID;
     AVCaptureSession *session;
     MJCaptureSession *captureSession;
@@ -110,7 +114,22 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     
     if ([captureSession isTorchAvailable])
         [torchButton setHidden:NO];
-    
+    else
+        [torchButton setHidden:YES];
+        
+    if ([captureSession isTelephotoLensAvailable]) {
+        [telephotoLensButton setHidden:NO];
+        [mainLensButton setHidden:NO];
+    } else {
+        [telephotoLensButton setHidden:YES];
+        [mainLensButton setHidden:YES];
+    }
+
+    if ([captureSession isZoomAvailable])
+        [zoomButton setHidden:NO];
+    else
+        [zoomButton setHidden:YES];
+
     [self addKeyValueObserver];
     [self registerApplicationBackgrounded];
     [self registerApplicationWillTerminate];
@@ -542,7 +561,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
     NSString *string = [NSString stringWithFormat:@"%s", __func__];
     [MJLogFileManager logStringToFile:string file:@"log.txt"];
 
-//    [captureSession startMaxRateTimer];
+    [captureSession startMaxRateTimer];
 
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self setSaveImage:captureSession.createdImage];

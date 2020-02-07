@@ -42,7 +42,10 @@
 - (void)activateMainLens;
 - (void)activateTelephotoLens;
 
+- (BOOL)isTelephotoLensAvailable;
+- (BOOL)isZoomAvailable;
 - (BOOL)isTorchAvailable;
+
 - (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point;
 
 - (void)enableTracking;

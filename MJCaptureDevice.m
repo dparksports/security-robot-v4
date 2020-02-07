@@ -31,11 +31,6 @@
 }
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(AVCaptureDevicePosition)position {
-//    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-//    for (AVCaptureDevice *device in devices)
-//        if ([device position] == position)
-//            return device;
-
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera
                                                                  mediaType:AVMediaTypeVideo
                                                                   position:position];

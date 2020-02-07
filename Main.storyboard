@@ -191,7 +191,7 @@
                                         </constraints>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                                         <size key="titleShadowOffset" width="1" height="1"/>
-                                        <state key="normal" title="Zoom X4">
+                                        <state key="normal" title="Zoom X2">
                                             <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
@@ -320,13 +320,16 @@
                         <outlet property="batteryLabel" destination="uHB-cz-Pmf" id="NBS-Yp-aB5"/>
                         <outlet property="iCirclePanel" destination="ISF-dL-hng" id="NgM-xq-8H7"/>
                         <outlet property="imageView" destination="OVy-CI-Z0Q" id="r1v-zR-1eA"/>
+                        <outlet property="mainLensButton" destination="m0y-wF-KOX" id="zEZ-8z-FAp"/>
                         <outlet property="memLabel" destination="uyl-fh-xm4" id="eAV-Ur-OnE"/>
                         <outlet property="previewLayerView" destination="6jn-1X-E5F" id="Inh-5b-0A0"/>
                         <outlet property="recordButton" destination="oUC-dU-YiH" id="lG5-FL-wpz"/>
                         <outlet property="recordingLabel" destination="ll9-Od-ynu" id="jSu-7v-dxe"/>
                         <outlet property="runTimeLabel" destination="ugd-jI-3yU" id="UTN-jK-Ape"/>
                         <outlet property="startButtonPanel" destination="zA3-JO-rsr" id="Wz9-rJ-2mn"/>
+                        <outlet property="telephotoLensButton" destination="tGl-uY-4zd" id="j3V-uY-KWe"/>
                         <outlet property="torchButton" destination="K1a-YN-9yb" id="HuY-Fa-vNA"/>
+                        <outlet property="zoomButton" destination="K1a-YN-9yb" id="ynm-eh-STz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -728,7 +731,7 @@
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="3.7" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="3.8" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
                                 <rect key="frame" x="220" y="67" width="160" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="gc4-iF-XAy"/>
