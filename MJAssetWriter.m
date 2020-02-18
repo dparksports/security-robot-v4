@@ -29,7 +29,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        NSUInteger maxFileSizeInMB = 250 * 2; // 250
+        NSUInteger maxFileSizeInMB = 512 * 1; // 250
         maxFileSizeInByte = maxFileSizeInMB * 1024 * 1024;
         maxFileCount = [self maxFileCountBySize:maxFileSizeInMB];
     }
@@ -90,7 +90,7 @@
 
 - (NSInteger) maxFileCountBySize:(float)fileSizeInMB {
     float units = [self totalDiskSpaceInMB];
-    units = [self freeDiskSpaceInMB] -  (512*3); //512 * 4
+    units = [self freeDiskSpaceInMB] -  (1024 * 1); //1GB Free reserved
     float count = units / fileSizeInMB;
     NSLog(@"%s: fileCount: %.1f @ %.1f MB", __func__, count, fileSizeInMB);
     NSInteger fileCount = count;

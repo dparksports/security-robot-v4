@@ -565,7 +565,7 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self setSaveImage:captureSession.createdImage];
-        [self saveImageView];
+//        [self saveImageView];
         
     });
     [captureSession setCreateImage:YES];

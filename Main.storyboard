@@ -189,11 +189,10 @@
                                             <constraint firstAttribute="width" constant="158" id="7Xg-Ss-YwT"/>
                                             <constraint firstAttribute="height" constant="44" id="aTp-pM-IRx"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="21"/>
                                         <size key="titleShadowOffset" width="1" height="1"/>
-                                        <state key="normal" title="Zoom X2">
-                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="ZOOM 3X">
+                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
                                             <action selector="toggleZoom:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EI4-fm-es6"/>
@@ -205,30 +204,13 @@
                                             <constraint firstAttribute="height" constant="50" id="baL-Bo-J4e"/>
                                             <constraint firstAttribute="width" constant="158" id="eQW-Ve-kqu"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="21"/>
                                         <size key="titleShadowOffset" width="1" height="1"/>
-                                        <state key="normal" title="Telephoto Lens">
-                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="TELEPHOTO LENS">
+                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
                                             <action selector="activateTelephotoLens:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4Xb-gd-8uJ"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1MC-AE-pJS">
-                                        <rect key="frame" x="8" y="214" width="158" height="44"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="158" id="MS2-p3-Vig"/>
-                                            <constraint firstAttribute="height" constant="44" id="rSg-Tb-kEy"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
-                                        <size key="titleShadowOffset" width="1" height="1"/>
-                                        <state key="normal" title="Torch">
-                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="toggleLight:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xuy-74-2Ik"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m0y-wF-KOX">
@@ -237,14 +219,28 @@
                                             <constraint firstAttribute="height" constant="50" id="CkM-HW-IlO"/>
                                             <constraint firstAttribute="width" constant="158" id="dBZ-r6-mLA"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="21"/>
                                         <size key="titleShadowOffset" width="1" height="1"/>
-                                        <state key="normal" title="Main Lens">
-                                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="titleShadowColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="MAIN LENS">
+                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
                                             <action selector="activateMainLens:" destination="BYZ-38-t0r" eventType="touchUpInside" id="S4L-ve-Rps"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1MC-AE-pJS">
+                                        <rect key="frame" x="8" y="462" width="158" height="51"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="158" id="MS2-p3-Vig"/>
+                                            <constraint firstAttribute="height" constant="51" id="rSg-Tb-kEy"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="21"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
+                                        <state key="normal" title="TORCH">
+                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="toggleLight:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xuy-74-2Ik"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -252,9 +248,9 @@
                                     <constraint firstItem="K1a-YN-9yb" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="8" id="1Fj-CE-FVy"/>
                                     <constraint firstItem="MKj-zU-ifZ" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" constant="20" symbolic="YES" id="4lz-LM-n0X"/>
                                     <constraint firstItem="uHB-cz-Pmf" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="104" id="5U9-G5-tIV"/>
-                                    <constraint firstItem="1MC-AE-pJS" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="214" id="5rX-Kd-Qjy"/>
                                     <constraint firstItem="uyl-fh-xm4" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="76" id="6Gg-Xx-CTQ"/>
                                     <constraint firstItem="OVy-CI-Z0Q" firstAttribute="leading" secondItem="6jn-1X-E5F" secondAttribute="leading" id="Av4-ZL-gdQ"/>
+                                    <constraint firstItem="1MC-AE-pJS" firstAttribute="top" secondItem="oUC-dU-YiH" secondAttribute="top" id="FeE-bV-8w3"/>
                                     <constraint firstItem="tGl-uY-4zd" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="59" id="Iog-jw-Z3f"/>
                                     <constraint firstItem="ugd-jI-3yU" firstAttribute="top" secondItem="6jn-1X-E5F" secondAttribute="top" constant="33" id="LkI-eb-jpW"/>
                                     <constraint firstAttribute="trailing" secondItem="uyl-fh-xm4" secondAttribute="trailing" constant="8" id="Mx9-Rc-H8X"/>
@@ -344,7 +340,7 @@
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="295.19999999999999" y="451.12443778110946"/>
+            <point key="canvasLocation" x="-96.799999999999997" y="451.12443778110946"/>
         </scene>
         <!--Folder Controller-->
         <scene sceneID="RU8-dM-RYZ">
@@ -731,7 +727,7 @@
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="3.8" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.0" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
                                 <rect key="frame" x="220" y="67" width="160" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="gc4-iF-XAy"/>

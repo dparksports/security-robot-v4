@@ -160,6 +160,8 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     CGFloat heigh5S = 568;
     CGFloat width6Plus = 414;
     CGFloat height6Plus = 736;
+    CGFloat width11ProMax = 414;
+    CGFloat height11ProMax = 896;
 
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     switch (deviceOrientation) {
@@ -174,12 +176,12 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
                 // 5s: *2.6
                 stampYOffset = fontSize * 2.6;
             } else {
-                if (UIScreen.mainScreen.bounds.size.height == width6Plus) {
-                    // 6Plus: *0.6
-                    stampYOffset = fontSize * 0.7;
-                } else {
+                if (UIScreen.mainScreen.bounds.size.width == height11ProMax) {
                     // Pro11Max: *2.5
                     stampYOffset = fontSize * 1.5;
+                } else {
+                    // 6Plus: *0.6
+                    stampYOffset = fontSize * 0.7;
                 }
             }
 
@@ -201,12 +203,12 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
                 // 5s: *3.6
                 stampYOffset = fontSize * 3.6;
             } else {
-                if (UIScreen.mainScreen.bounds.size.height == width6Plus) {
-                    // 6Plus: *1.9
-                    stampYOffset = fontSize * 1.7;
-                } else {
+                if (UIScreen.mainScreen.bounds.size.width == height11ProMax) {
                     // Pro11Max: *2.5
                     stampYOffset = fontSize * 2.5;
+                } else {
+                    // 6Plus: *1.9
+                    stampYOffset = fontSize * 1.7;
                 }
             }
 
@@ -229,12 +231,12 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
                 // 5s: *3.6
                 stampYOffset = fontSize * 3.6;
             } else {
-                if (UIScreen.mainScreen.bounds.size.height == height6Plus) {
-                    // 6Plus: *2.4
-                    stampYOffset = fontSize * 2.4;
-                } else {
+                if (UIScreen.mainScreen.bounds.size.height == height11ProMax) {
                     // Pro11Max: *1.0
                     stampYOffset = fontSize * 1.0;
+                } else {
+                    // 6Plus: *2.4
+                    stampYOffset = fontSize * 2.4;
                 }
             }
 
@@ -323,7 +325,7 @@ CGFloat minFrameRate = 5.0; //4.0
     }
 }
 
-CGFloat maxZoomFactor = 2.0;
+CGFloat maxZoomFactor = 3.0;
 CGFloat minZoomFactor = 1.0;
 
 - (void)activateMainLens{
@@ -881,13 +883,11 @@ CGFloat minZoomFactor = 1.0;
 - (void)restoreMediumRate:(NSTimer *)timer {
     [timer invalidate];
     [self setMediumFrameRate];
-    [self setMinZoom];
 }
 
 - (void)restoreMinRate:(NSTimer *)timer {
     [timer invalidate];
     [self setMinFrameRate];
-    [self setMinZoom];
 }
 
 - (void)startMaxRateTimer{
