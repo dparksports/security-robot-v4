@@ -15,7 +15,6 @@
 @interface FolderController ()
 <QLPreviewControllerDataSource, QLPreviewControllerDelegate, DirectoryWatcherDelegate, UIDocumentInteractionControllerDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) DirectoryWatcher *docWatcher;
-@property (nonatomic, strong) NSMutableArray *documentURLs;
 @property (nonatomic, strong) NSMutableArray *sortAttributes;
 @property (nonatomic, strong) NSMutableDictionary *fileAttributes;
 //@property (nonatomic, strong) NSMutableDictionary *fileAttributeIndex;
@@ -54,9 +53,6 @@
         self.fileAttributes = [NSMutableDictionary dictionary];
     if (! _sortAttributes) {
         self.sortAttributes = [NSMutableArray array];
-    }
-    if (! _documentURLs) {
-        self.documentURLs = [NSMutableArray array];
         [self toggleFreeOrTotal:nil];
     }
     
@@ -114,32 +110,22 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSUInteger count = 1;
-//    NSLog(@"%s: count:%lu", __func__, (unsigned long)count);
     return count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSUInteger count = [self.documentURLs count];
-//    NSLog(@"%s: count:%lu", __func__, (unsigned long)count);
+    NSUInteger count = [self.sortAttributes count];
     return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)aTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FolderTableCell *cell = [aTableView dequeueReusableCellWithIdentifier:@"FolderTableCellID"];
     if (cell) {
-//        NSURL *fileURL = [self.documentURLs objectAtIndex:indexPath.row];
         FileAttributes *attributes = [self.sortAttributes objectAtIndex:indexPath.row];
         self.documentInteractionController.URL = attributes.fileURL;
         cell.titleLabel.text = [self.documentInteractionController name];
         if ([self.documentInteractionController.icons count] > 0)
             cell.iconView.image = [self.documentInteractionController.icons lastObject];
-        
-//        FileAttributes *attributes = [self.fileAttributes objectForKey:fileURL];
-//        if (! attributes) {
-//            NSString *filePath = [fileURL path];
-//            attributes = [FileManager onefileAttributesAtPath:filePath];
-//            [self.fileAttributes setObject:attributes forKey:fileURL];
-//        }
         
         cell.titleLabel.text = [attributes displayName];
         cell.timetampLabel.text = [attributes modifiedDateString];
@@ -163,11 +149,11 @@
 - (void)tableView:(UITableView *)atableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%s", __func__);
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSURL *fileURL = [self.documentURLs objectAtIndex:indexPath.row];
-        NSString *filePath = [fileURL path];
+        FileAttributes *attributes = [self.sortAttributes objectAtIndex:indexPath.row];
+        NSString *filePath = [attributes.fileURL path];
         [self performSelectorInBackground:@selector(deleteSelectedFileName:) withObject:filePath];
         
-        [self.documentURLs removeObjectAtIndex:indexPath.row];
+        [self.sortAttributes removeObjectAtIndex:indexPath.row];
         NSArray *indexPathsToDelete = [NSArray arrayWithObject:indexPath];
         [atableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationTop];
     }
@@ -177,10 +163,10 @@
     NSLog(@"%s: _folderAtPath:%@", __func__, _folderAtPath);
     
     [aTableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSURL *fileURL = [self.documentURLs objectAtIndex:indexPath.row];
-    self.documentInteractionController.URL = fileURL;
+    FileAttributes *attributes = [self.sortAttributes objectAtIndex:indexPath.row];
+    self.documentInteractionController.URL = attributes.fileURL;
     
-    NSString *filePath = [fileURL path];
+    NSString *filePath = [attributes.fileURL path];
     if ([FileManager isDirectoryUTIAtPath:filePath withUTI:self.documentInteractionController.UTI]) {
         FolderController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"FolderControllerID"];
         [controller setFolderAtPath:filePath];
@@ -191,7 +177,7 @@
         if ([lastPathComponent isEqualToString:@"Inbox"]) {
             [self loadSelectedFileName:filePath];
         } else {
-            BOOL canPreviewItem = [QLPreviewController canPreviewItem:fileURL];
+            BOOL canPreviewItem = [QLPreviewController canPreviewItem:attributes.fileURL];
             if (canPreviewItem)
                 [self previewDocumentAtIndexPath:indexPath];
             else
@@ -238,14 +224,14 @@
 
 // Returns the number of items that the preview controller should preview
 - (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)previewController {
-    NSInteger numToPreview = self.documentURLs.count;
-    NSLog(@"%s: self.documentURLs.count:%lu", __func__, (unsigned long)self.documentURLs.count);
+    NSInteger numToPreview = self.sortAttributes.count;
     return numToPreview;
 }
 
 // returns the item that the preview controller should preview
 - (id)previewController:(QLPreviewController *)previewController previewItemAtIndex:(NSInteger)index {
-    NSURL *documentURL = [self.documentURLs objectAtIndex:index];
+    FileAttributes *attributes = [self.sortAttributes objectAtIndex:index];
+    NSURL *documentURL = attributes.fileURL;
     return documentURL;
 }
 
@@ -253,7 +239,7 @@
 
 - (void)directoryDidChange:(DirectoryWatcher *)folderWatcher {
     NSLog(@"%s", __func__);
-    [self.documentURLs removeAllObjects];
+    [self.sortAttributes removeAllObjects];
     [self.fileAttributes removeAllObjects];
     
     NSError *error;
@@ -262,13 +248,14 @@
     if (error)
         NSLog(@"%s: error:%@", __func__, [error localizedDescription]);
     
+    NSMutableArray *documentURLs = [NSMutableArray new];
     for (NSString* fileName in documentsDirectoryContents) {
         NSString *filePath = [_folderAtPath stringByAppendingPathComponent:fileName];
         NSURL *fileURL = [NSURL fileURLWithPath:filePath];
-        [self.documentURLs addObject:fileURL];
+        [documentURLs addObject:fileURL];
     }
 
-    for (NSURL *fileURL in self.documentURLs) {
+    for (NSURL *fileURL in documentURLs) {
         FileAttributes *attributes = [self.fileAttributes objectForKey:fileURL];
         if (! attributes) {
             NSString *filePath = [fileURL path];
@@ -281,30 +268,7 @@
     
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"modifiedDate" ascending:TRUE];
     [self.sortAttributes sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-//    for (int i = 0; i < sortAttributes.count; i++) {
-//        FileAttributes *attributes = sortAttributes[i];
-//        [self.fileAttributeIndex setObject:attributes forKey:i];
-//    }
-
     [tableView reloadData];
-
-    
-//    [sortArray sortedArrayWithOptions:NSSortStable
-//        usingComparator:^NSComparisonResult(id path1, id path2) {
-//
-//        NSString *filePath1 = [path1 path];
-//        FileAttributes *attributes1 = [FileManager onefileAttributesAtPath:filePath1];
-//
-//        NSString *filePath2 = [path2 path];
-//        FileAttributes *attributes2 = [FileManager onefileAttributesAtPath:filePath2];
-//
-//        NSString *mod1 = [attributes1 modifiedDateString];
-//        NSString *mod2 = [attributes2 modifiedDateString];
-//
-//        return [attributes2.modifiedDate compare:attributes1.modifiedDate];
-//    }];
-    
-//    [self setDocumentURLs:sortArray];
 }
 
 - (void)loadSelectedFileName:(NSString*)filePath {
