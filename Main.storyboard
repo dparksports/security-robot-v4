@@ -727,7 +727,7 @@
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.0" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.1" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
                                 <rect key="frame" x="220" y="67" width="160" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="gc4-iF-XAy"/>

@@ -568,8 +568,10 @@ static void *SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevice
 //        [self saveImageView];
         
     });
-    [captureSession setCreateImage:YES];
     
+    // causes a memory leak.
+    [captureSession setCreateImage:NO];
+
     [self focusAndExposeAtLastFocusPoint];
 }
 
