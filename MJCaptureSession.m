@@ -263,7 +263,9 @@ static CGFloat DegreesToRadians(CGFloat degrees) {
     CGContextSetTextDrawingMode(context, kCGTextFillStroke);
     
     NSString *fontName = @"Helvetica";
-    fontRef = CTFontCreateWithName((CFStringRef)fontName, fontSize, NULL);
+    if (! fontRef) {
+        fontRef = CTFontCreateWithName((CFStringRef)fontName, fontSize, NULL);
+    }
     CGContextSelectFont(context, "Helvetica", fontSize, kCGEncodingMacRoman);
     
     if (updateDrawString1)
@@ -404,11 +406,21 @@ CGFloat minZoomFactor = 1.0;
 }
 
 - (BOOL)isTelephotoLensAvailable {
-    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera
-                                                                 mediaType:AVMediaTypeVideo
-                                                                  position:AVCaptureDevicePositionBack];
+    if (@available(iOS 10.0, *)) {
+        AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTelephotoCamera
+                                                                     mediaType:AVMediaTypeVideo
+                                                                      position:AVCaptureDevicePositionBack];
+        
+        return captureDevice != NULL;
+    } else {
+        return NO;
+    }
     
-    return captureDevice != NULL;
+    // Create a device discovery session
+//    if #available(iOS 10.0, *) {
+//        let deviceTypes: [AVCaptureDevice.DeviceType] = [AVCaptureDevice.DeviceType.builtInWideAngleCamera, AVCaptureDevice.DeviceType.builtInDuoCamera, AVCaptureDevice.DeviceType.builtInTelephotoCamera]
+//        self.videoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes, mediaType: AVMediaType.video, position: .unspecified)
+//    }
 }
 
 - (BOOL)isZoomAvailable {

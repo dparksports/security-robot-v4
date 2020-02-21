@@ -324,7 +324,7 @@
                         <outlet property="runTimeLabel" destination="ugd-jI-3yU" id="UTN-jK-Ape"/>
                         <outlet property="startButtonPanel" destination="zA3-JO-rsr" id="Wz9-rJ-2mn"/>
                         <outlet property="telephotoLensButton" destination="tGl-uY-4zd" id="j3V-uY-KWe"/>
-                        <outlet property="torchButton" destination="K1a-YN-9yb" id="HuY-Fa-vNA"/>
+                        <outlet property="torchButton" destination="1MC-AE-pJS" id="AGf-42-aqd"/>
                         <outlet property="zoomButton" destination="K1a-YN-9yb" id="ynm-eh-STz"/>
                     </connections>
                 </viewController>
@@ -727,7 +727,7 @@
                                 <nil key="highlightedColor"/>
                                 <size key="shadowOffset" width="0.0" height="0.0"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.1" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000298023224" contentMode="left" misplaced="YES" text="4.3" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="NTh-jQ-h6p">
                                 <rect key="frame" x="220" y="67" width="160" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="gc4-iF-XAy"/>
